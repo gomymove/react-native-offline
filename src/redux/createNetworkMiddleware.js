@@ -89,6 +89,7 @@ function createNetworkMiddleware({
   regexActionType = /FETCH.*REQUEST/,
   actionTypes = [],
   queueReleaseThrottle = 50,
+  shouldDequeueSelector = null,
 }: Arguments = {}) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
@@ -114,7 +115,16 @@ function createNetworkMiddleware({
     }
 
     const isBackOnline = didComeBackOnline(action, isConnected);
-    if (isBackOnline) {
+    let shouldDequeue = false;
+    if (shouldDequeueSelector) {
+      shouldDequeue =
+        (isConnected || isBackOnline) &&
+        actionQueue.length > 0 &&
+        shouldDequeueSelector(getState());
+    } else {
+      shouldDequeue = isBackOnline;
+    }
+    if (shouldDequeue) {
       // Dispatching queued actions in order of arrival (if we have any)
       next(action);
       return releaseQueue(actionQueue);
