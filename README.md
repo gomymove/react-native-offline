@@ -1,12 +1,9 @@
 # react-native-offline
-[![All Contributors](https://img.shields.io/badge/all_contributors-30-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-31-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/rgommezz/react-native-offline.svg?style=shield)](https://circleci.com/gh/rgommezz/react-native-offline) [![npm version](https://badge.fury.io/js/react-native-offline.svg)](https://badge.fury.io/js/react-native-offline) [![Coverage Status](https://coveralls.io/repos/github/rauliyohmc/react-native-offline/badge.svg?branch=master)](https://coveralls.io/github/rauliyohmc/react-native-offline?branch=master)
 [![npm](https://img.shields.io/npm/dm/react-native-offline.svg)]()
 
 Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports iOS, Android and Windows platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
-
-## Important (Please read)
-**This is the documentation for version 4.x.x. If you are migrating from v3 to v4, check the [release notes](https://github.com/rgommezz/react-native-offline/releases/tag/v4.0.0).**
 
 ## Example app
 A comprehensive [example app](/example) is available within Expo to play with the library and better understand its different modules. [Go and check it out!](https://exp.host/@rgommezz/react-native-offline-example)
@@ -72,13 +69,90 @@ This gives you the power to prioritize our work and support the project contribu
 [![issuehunt-image](https://camo.githubusercontent.com/f5f88939f6c627454b7c5d0eaef9f7cc40cc9586/68747470733a2f2f697373756568756e742e696f2f7374617469632f656d6265642f697373756568756e742d627574746f6e2d76312e737667)](https://issuehunt.io/repos/86369462)
 
 ## Installation
-This library supports React Native v0.55 or higher. You also need to have `react-redux` version 6.x.x installed.
+
+### RN >= 0.59.x
+Make sure to have `react-redux` version 6.x.x or 7.x.x installed.
 ```
 $ yarn add react-native-offline
+
+# Or if you use npm
+$ npm i --save react-native-offline
+```
+
+This library uses `@react-native-community/netinfo@4.x.x` version underneath the hood. You then need to link the native parts of the library for the platforms you are using. If you are on React Native v0.60, you don't need to do anything else, since it supports autolinking. For iOS, just go to the `ios` folder and run `pod install`.
+
+Otherwise, the easiest way to link the library is using the CLI tool by running this command from the root of your project:
+
+```
+react-native link @react-native-community/netinfo
+```
+
+If you can't or don't want to use the CLI tool, you can also manually link the library using the instructions below (click on the arrow to show them):
+
+<details>
+<summary>Manually link the library on iOS</summary>
+
+Either follow the [instructions in the React Native documentation](https://facebook.github.io/react-native/docs/linking-libraries-ios#manual-linking) to manually link the framework or link using [Cocoapods](https://cocoapods.org) by adding this to your `Podfile`:
+
+```ruby
+pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
+```
+
+</details>
+
+<details>
+<summary>Manually link the library on Android</summary>
+
+Make the following changes:
+
+#### `android/settings.gradle`
+```groovy
+include ':react-native-community-netinfo'
+project(':react-native-community-netinfo').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/netinfo/android')
+```
+
+#### `android/app/build.gradle`
+```groovy
+dependencies {
+   ...
+   implementation project(':react-native-community-netinfo')
+}
+```
+
+#### `android/app/src/main/.../MainApplication.java`
+On top, where imports are:
+
+```java
+import com.reactnativecommunity.netinfo.NetInfoPackage;
+```
+
+Add the `NetInfoPackage` class to your list of exported packages.
+
+```java
+@Override
+protected List<ReactPackage> getPackages() {
+    return Arrays.asList(
+            new MainReactPackage(),
+            new NetInfoPackage()
+    );
+}
+```
+
+</details>
+
+Last but not list, you need to use [jetifier](https://github.com/mikehardy/jetifier) to convert the native dependency to AndroidX.
+
+### RN >= 0.55.x && RN <= 0.58.x
+Make sure to have `react-redux` version 6.x.x or 7.x.x installed.
+```
+$ yarn add react-native-offline@4.3.2
+
+# Or if you use npm
+$ npm i --save react-native-offline@4.3.2
 ```
 
 #### Android
-This library uses the `NetInfo` module from React Native underneath the hood. To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
+To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
 
 `<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />`
 
@@ -676,7 +750,7 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
 | [<img src="https://avatars1.githubusercontent.com/u/1300393?v=4" width="100px;"/><br /><sub><b>Thomas Bosch</b></sub>](http://www.codecentric.de)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=dickerpulli "Code") [📖](https://github.com/rgommezz/react-native-offline/commits?author=dickerpulli "Documentation") | [<img src="https://avatars2.githubusercontent.com/u/1828134?v=4" width="100px;"/><br /><sub><b>cinan</b></sub>](http://blog.cinan.sk)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=cinan "Code") | [<img src="https://avatars2.githubusercontent.com/u/3830084?v=4" width="100px;"/><br /><sub><b>Colon D</b></sub>](https://github.com/YKSing)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=YKSing "Code") | [<img src="https://avatars1.githubusercontent.com/u/10877466?v=4" width="100px;"/><br /><sub><b>Stephen Kempin</b></sub>](http://www.stephenkempin.co.uk)<br />[📖](https://github.com/rgommezz/react-native-offline/commits?author=SKempin "Documentation") | [<img src="https://avatars0.githubusercontent.com/u/5890860?v=4" width="100px;"/><br /><sub><b>Thomas Scharke</b></sub>](https://www.linkedin.com/in/tscharke/)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=tscharke "Code") [📖](https://github.com/rgommezz/react-native-offline/commits?author=tscharke "Documentation") | [<img src="https://avatars3.githubusercontent.com/u/570829?v=4" width="100px;"/><br /><sub><b>felipemartim</b></sub>](https://github.com/felipemartim)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=felipemartim "Code") [📖](https://github.com/rgommezz/react-native-offline/commits?author=felipemartim "Documentation") | [<img src="https://avatars1.githubusercontent.com/u/16226376?v=4" width="100px;"/><br /><sub><b>Mehdi A.</b></sub>](http://WIP)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=maieonbrix "Code") |
 | [<img src="https://avatars0.githubusercontent.com/u/1212381?v=4" width="100px;"/><br /><sub><b>Can OMUR</b></sub>](https://github.com/comur)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=comur "Code") | [<img src="https://avatars3.githubusercontent.com/u/5470392?v=4" width="100px;"/><br /><sub><b>Mark van Lagen</b></sub>](http://nijhuisenvanlagen.nl)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=markvl91 "Code") | [<img src="https://avatars2.githubusercontent.com/u/2320535?v=4" width="100px;"/><br /><sub><b>George Farro</b></sub>](https://github.com/gtfargo)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=gtfargo "Code") | [<img src="https://avatars2.githubusercontent.com/u/444063?v=4" width="100px;"/><br /><sub><b>Mickaël Leduque</b></sub>](https://github.com/mleduque)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=mleduque "Code") | [<img src="https://avatars3.githubusercontent.com/u/1901827?v=4" width="100px;"/><br /><sub><b>Florent Roques</b></sub>](https://stackoverflow.com/users/1152843/florent-roques?tab=profile)<br />[📖](https://github.com/rgommezz/react-native-offline/commits?author=florentroques "Documentation") | [<img src="https://avatars2.githubusercontent.com/u/6444719?v=4" width="100px;"/><br /><sub><b>Krzysztof Borowy</b></sub>](https://github.com/Krizzu)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=Krizzu "Code") [📖](https://github.com/rgommezz/react-native-offline/commits?author=Krizzu "Documentation") | [<img src="https://avatars2.githubusercontent.com/u/1548421?v=4" width="100px;"/><br /><sub><b>Thomas Deconinck</b></sub>](http://www.thomasdeconinck.fr)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=DCKT "Code") [📖](https://github.com/rgommezz/react-native-offline/commits?author=DCKT "Documentation") |
 | [<img src="https://avatars2.githubusercontent.com/u/5106466?v=4" width="100px;"/><br /><sub><b>Michał Pierzchała</b></sub>](https://buymeacoff.ee/thymikee)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=thymikee "Code") | [<img src="https://avatars3.githubusercontent.com/u/119142?v=4" width="100px;"/><br /><sub><b>Ian Graham</b></sub>](https://github.com/imartingraham)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=imartingraham "Code") | [<img src="https://avatars2.githubusercontent.com/u/1244867?v=4" width="100px;"/><br /><sub><b>Petter Samuelsen</b></sub>](http://www.pettersamuelsen.com)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=pettersamuelsen "Code") | [<img src="https://avatars1.githubusercontent.com/u/5339061?v=4" width="100px;"/><br /><sub><b>Lukas Kurucz</b></sub>](https://github.com/usrbowe)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=usrbowe "Code") | [<img src="https://avatars1.githubusercontent.com/u/18237132?v=4" width="100px;"/><br /><sub><b>Norris Oduro</b></sub>](https://twitter.com/norris1z)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=Norris1z "Code") | [<img src="https://avatars3.githubusercontent.com/u/43637878?v=4" width="100px;"/><br /><sub><b>Richard Tan</b></sub>](https://github.com/richardtks)<br />[🤔](#ideas-richardtks "Ideas, Planning, & Feedback") | [<img src="https://avatars3.githubusercontent.com/u/17765105?v=4" width="100px;"/><br /><sub><b>Oleg Kupriianov</b></sub>](https://twitter.com/tysh_pysh)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=Jimbomaniak "Code") |
-| [<img src="https://avatars1.githubusercontent.com/u/11155505?v=4" width="100px;"/><br /><sub><b>reilem</b></sub>](https://github.com/reilem)<br />[🤔](#ideas-reilem "Ideas, Planning, & Feedback") | [<img src="https://avatars1.githubusercontent.com/u/8154741?v=4" width="100px;"/><br /><sub><b>Josephine Wright</b></sub>](https://github.com/jozr)<br />[📖](https://github.com/rgommezz/react-native-offline/commits?author=jozr "Documentation") |
+| [<img src="https://avatars1.githubusercontent.com/u/11155505?v=4" width="100px;"/><br /><sub><b>reilem</b></sub>](https://github.com/reilem)<br />[🤔](#ideas-reilem "Ideas, Planning, & Feedback") | [<img src="https://avatars1.githubusercontent.com/u/8154741?v=4" width="100px;"/><br /><sub><b>Josephine Wright</b></sub>](https://github.com/jozr)<br />[📖](https://github.com/rgommezz/react-native-offline/commits?author=jozr "Documentation") | [<img src="https://avatars0.githubusercontent.com/u/16078455?v=4" width="100px;"/><br /><sub><b>Kirill Karpov</b></sub>](http://umbrellait.com)<br />[💻](https://github.com/rgommezz/react-native-offline/commits?author=umbrella-kirill-karpov "Code") |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!
